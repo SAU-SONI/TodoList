@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+</head>
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f2f2f2;
+        list-style: none;
+    }
+
+    li {
+        font-size: 2rem;
+    }
+
+    .newAddedClass {
+        margin: 5px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.5s;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        height: 100vh;
+        background-color: #f4f4f9;
+    }
+
+    #input_id {
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+        width: 300px;
+        transition: border-color 0.3s ease;
+    }
+
+    #input_id:focus {
+        outline: none;
+        border-color: #007bff;
+    }
+
+    #button_id,
+    .Deletebuttons {
+        padding: 12px 24px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    #button_id:hover,
+    .Deletebuttons {
+        background-color: #0056b3;
+    }
+
+    #button_id:focus,
+    .Deletebuttons {
+        outline: none;
+        background-color: #0056b3;
+    }
+</style>
+
+<body>
+    <div>
+        <center>
+            <h1>TODO LIST</h1>
+        </center>
+        <input type="text" id="input_id">
+        <button id="button_id">Add Items</button>
+        <div class="conatiner_new"></div>
+    </div>
+    <script>
+        let buttonId = document.getElementById("button_id");
+        let mydiv = document.querySelector(".conatiner_new");
+        let inputValue = document.getElementById("input_id");
+
+        // Retrieve existing todo list from localStorage or initialize an empty array
+        let localtodolist = JSON.parse(localStorage.getItem("SKYoutube")) || [];
+
+        function renderTodoList() {
+            mydiv.innerHTML = "";
+            localtodolist.forEach(todo => {
+                let newDiv = document.createElement("div");
+                newDiv.classList.add("newAddedClass");
+                newDiv.innerHTML = `<li>${todo}</li> <button type="button" class="Deletebuttons">Delete</button>`;
+                mydiv.append(newDiv);
+            });
+        }
+
+        renderTodoList();
+
+        function mainFunction() {
+            // Get input value and remove leading/trailing whitespace
+            let addTodoListValue = inputValue.value.trim();
+
+            if (addTodoListValue === "") {
+                alert("Please Enter a Value");
+                return;
+            }
+
+            // Prevent duplicates by adding only if the value is not already in the list
+            if (!localtodolist.includes(addTodoListValue)) {
+                localtodolist.push(addTodoListValue);
+                localStorage.setItem("SKYoutube", JSON.stringify(localtodolist));
+                renderTodoList();
+            } else {
+                alert("This item is already in the list");
+            }
+
+            inputValue.value = "";  // Clear the input field
+        }
+
+        buttonId.addEventListener("click", mainFunction);
+
+        // Event delegation for dynamically added delete buttons
+        mydiv.addEventListener("click", (event) => {
+            if (event.target && event.target.classList.contains("Deletebuttons")) {
+                let parent = event.target.parentElement;
+                let todoText = parent.querySelector("li").textContent;
+
+                // Remove the item from the array
+                localtodolist = localtodolist.filter(todo => todo !== todoText);
+                localStorage.setItem("SKYoutube", JSON.stringify(localtodolist));
+                renderTodoList();
+            }
+        });
+    </script>
+</body>
+
+</html>
